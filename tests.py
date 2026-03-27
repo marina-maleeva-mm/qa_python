@@ -1,19 +1,21 @@
 import pytest
 from main import BooksCollector
 
+@pytest.fixture
+def collector():
+    return BooksCollector()
+
 class TestBooksCollector:
 
     # Проверка добавления двух книг в словарь books_genre (начальный пример)
-    def test_add_new_book_add_two_books(self):
-        collector = BooksCollector()
+    def test_add_new_book_add_two_books(self, collector):
         collector.add_new_book('Гордость и предубеждение и зомби')
         collector.add_new_book('Что делать, если ваш кот хочет вас убить')
         assert len(collector.get_books_genre()) == 2        
                             
 
     # Проверка добавления трех книг в словарь books_genre (именно мой тест, а не тот, который уже тут был)
-    def test_add_new_book_add_three_books(self):
-        collector = BooksCollector()
+    def test_add_new_book_add_three_books(self, collector):
 
         collector.add_new_book('Маленький принц')
         collector.add_new_book('Тревожные люди')
@@ -27,8 +29,7 @@ class TestBooksCollector:
         '',
         'Бабушка велела кланяться и передать что просит прощения очень очень очень',
     ])
-    def test_add_new_book_not_add_book_with_invalid_name(self, name):
-        collector = BooksCollector()
+    def test_add_new_book_not_add_book_with_invalid_name(self, collector, name):
 
         collector.add_new_book(name)
 
@@ -36,9 +37,7 @@ class TestBooksCollector:
 
 
     # Проверка установления жанра, если книга есть в словаре books_genre
-    def test_set_book_genre_set_valid_genre(self):
-        collector = BooksCollector()
-
+    def test_set_book_genre_set_valid_genre(self, collector):
         collector.add_new_book('Гарри Поттер')
         collector.set_book_genre('Гарри Поттер', 'Фантастика')
 
@@ -46,11 +45,8 @@ class TestBooksCollector:
 
 
     # Проверка, что метод get_book_genre возвращает жанр книги по ее названию
-    def test_get_book_genre_return_correct_genre(self):
-        collector = BooksCollector()
-
-        collector.add_new_book('Дюплекс')
-        collector.set_book_genre('Дюплекс', 'Комедии')
+    def test_get_book_genre_return_correct_genre(self, collector):
+        collector.books_genre['Дюплекс'] = 'Комедии'
 
         assert collector.get_book_genre('Дюплекс') == 'Комедии'
 
@@ -63,8 +59,7 @@ class TestBooksCollector:
             ('Детективы', ['Золушка']),
         ]
     )
-    def test_get_books_with_specific_genre_return_books(self, genre, expected):
-        collector = BooksCollector()
+    def test_get_books_with_specific_genre_return_books(self, collector, genre, expected):
 
         collector.add_new_book('Русалочка')
         collector.add_new_book('Золушка')
@@ -76,8 +71,7 @@ class TestBooksCollector:
 
 
     # Проверка, что метод get_books_genre выводит текущий словарь books_genre
-    def test_get_books_genre_return_dictionary(self):
-        collector = BooksCollector()
+    def test_get_books_genre_return_dictionary(self, collector):
 
         collector.add_new_book('Властелин колец')
         collector.set_book_genre('Властелин колец', 'Фантастика')
@@ -86,8 +80,7 @@ class TestBooksCollector:
 
 
     # Проверка, что метод get_books_for_children возвращает книги, которые подходят детям
-    def test_get_books_for_children_return_books_without_age_rating(self):
-        collector = BooksCollector()
+    def test_get_books_for_children_return_books_without_age_rating(self, collector):
 
         collector.add_new_book('Тайна третьей планеты')
         collector.add_new_book('Крик')
@@ -99,8 +92,7 @@ class TestBooksCollector:
 
 
     # Проверка, что метод add_book_in_favorites добавляет книгу в избранное
-    def test_add_book_in_favorites_add_book(self):
-        collector = BooksCollector()
+    def test_add_book_in_favorites_add_book(self, collector):
         collector.add_new_book('Шантарам')
         collector.add_book_in_favorites('Шантарам')
 
@@ -108,8 +100,7 @@ class TestBooksCollector:
 
 
     # Проверка, что метод delete_book_from_favorites удаляет книгу из избранного
-    def test_delete_book_from_favorites_remove_book(self):
-        collector = BooksCollector()
+    def test_delete_book_from_favorites_remove_book(self, collector):
         collector.add_new_book('Гранатовый браслет')
         collector.add_book_in_favorites('Гранатовый браслет')
         collector.delete_book_from_favorites('Гранатовый браслет')
@@ -118,12 +109,8 @@ class TestBooksCollector:
 
 
     # Проверка, что метод get_list_of_favorites_books получает список избранных книг
-    def test_get_list_of_favorites_books_return_list(self):
-        collector = BooksCollector()
-        collector.add_new_book('Сумерки')
-        collector.add_new_book('Алые паруса')
-        collector.add_book_in_favorites('Сумерки')
-        collector.add_book_in_favorites('Алые паруса')
+    def test_get_list_of_favorites_books_return_list(self, collector):
+        collector.favorites = ['Сумерки', 'Алые паруса']
 
         assert collector.get_list_of_favorites_books() == ['Сумерки', 'Алые паруса']     
 
